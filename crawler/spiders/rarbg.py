@@ -42,7 +42,7 @@ class RarbgSpider(scrapy.Spider):
 		itemloader.add_value('screenshot_url',shot_urls)
 		
 		#get imdb url
-		imdb_url = movie_table.xpath('/tr[6]/tr[2]/a/@href').extract()
+		imdb_url = movie_table.xpath('/tr[6]/td[2]/a/@href').extract()
 		itemloader.add_value('imdb_url',imdb_url)
 		
 		#get category
@@ -65,7 +65,7 @@ class RarbgSpider(scrapy.Spider):
 		year = moive_table.xpath('./tr[15]/td[2]/text()').extract()
 		itemloader.add_value('year',year)
 		
-		return itemloader.load_item()
+		yield itemloader.load_item()
 		
 		
 	
