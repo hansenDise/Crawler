@@ -9,6 +9,19 @@ import scrapy
 
 
 class CrawlerItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+	resouceType = scrapy.Field()
+	title = scrapy.Field()
+	release_year = scrapy.Field()
+	runtime = scrapy.Field()
+	year = scrapy.Field()
+	poster_url = scrapy.Field()
+	screenshot_url = scrapy.Field()
+	imdb_url = scrapy.Field()
+	category = scrapy.Field()
+	actors = scrapy.Field()
+	directors = scrapy.Field()
+	torrent_url  = scrapy.Field()
+	magnet_url = scrapy.Field()
+	filesize = scrapy.Field()
+	genres = scrapy.Field()
+	

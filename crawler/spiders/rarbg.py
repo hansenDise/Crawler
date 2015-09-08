@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 import scrapy
 from scrapy.shell import inspect_response
-
+from scrapy.loader import ItemLoader
+from crawler.items import CrawlerItem
 
 class RarbgSpider(scrapy.Spider):
 	name="rarbgmovie"
 	allowed_domains = ["rarbg.to"]
 	url_prefix = "https://rarbg.to"
 	start_urls = ()
-	totalpage = 10	#total pages number
+	totalpage = 2	#total pages number
 	
 	
 	def start_requests(self):
@@ -18,10 +19,53 @@ class RarbgSpider(scrapy.Spider):
 			
 			
 	def parse(self,response):
-		pass
+		#inspect_response(response,self)
+		movielist = response.xpath('//tr[@class="lista2"]/td[2]/a[1]/@href').extract()
 		
+		for item in movielist:
+			url = self.url_prefix + item
+			yield scrapy.Request(url,callback=self.moviepase)
 	
 	def moviepase(self,response):
-		pass
+		inspect_response(response,self)
+		
+		itemloader = ItemLoader(item=CrawlerItem())
+		#获取包含真个电影的 table
+		movie_table = response.xpath('//table[@class="lista-rounded"]/tr[2]/td/div//table')
+		
+		#get poster url
+		poster_url = movie_table.xpath('./tr[3]/td[2]/img/@src').extract()
+		itemloader.add_value('poster_url',poster_url)
+		
+		#get screen shot image url
+		shot_urls = movie_table.xpath('./tr[5]/td[2]/a/img/@src').extract()
+		itemloader.add_value('screenshot_url',shot_urls)
+		
+		#get imdb url
+		imdb_url = movie_table.xpath('/tr[6]/tr[2]/a/@href').extract()
+		itemloader.add_value('imdb_url',imdb_url)
+		
+		#get category
+		category = movie_table.xpath('./tr[8]/td[2]/a/text()').extract()
+		itemloader.add_value('category',category)
+		
+		#get file size
+		filesize = movie_table.xpath('./tr[9]/td[2]/text()').extract()
+		itemloader.add_value('filesize',filesize)
+		
+		#get title
+		title = movie_table.xpath('./tr[12]/td[2]/span/text()').extract()
+		itemloader.add_value('title',title)
+		
+		#get genres
+		genres = movie_table.xpath('./tr[13]/td[2]/span/a/text()').extract()
+		itemloader.add_value('genres',genres)
+		
+		#get year
+		year = moive_table.xpath('./tr[15]/td[2]/text()').extract()
+		itemloader.add_value('year',year)
+		
+		return itemloader.load_item()
+		
 		
 	
