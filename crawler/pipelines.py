@@ -22,15 +22,23 @@ class CrawlerPipeline(object):
 				raise DropItem()
 			
 			#check category
-			category = item['category'].replace('Movies/','')
+			category = item['category'].strip().replace('Movies/','')
 			sql_str = 'select * from category where name="%s"'%(category)
 			iret = self.cursor.execute(sql_str)
+			
+			categoryid = 0
+			
 			if iret == 0:
 				#insert into category
 				sql_str = 'insert into category(name) values("%s")'%(category)
 				self.cursor.execute(sql_str)
 				self.conn.commit()
-			
+				sql_str = 'select * from category where name = "%s"'%category
+				cursor.execute(sql_str)
+				categoryid = cursor.fetchone()[0][0]
+			else:
+				categoryid = cursor.fetchall()[0][0]
+				
 			#search whether already have resource
 			sql_str = 'select * from resource where imdb_url="%"'%()item['imdb_url'])
 			iret = self.cursor.execute(sql_str)
