@@ -19,53 +19,86 @@ class RarbgSpider(scrapy.Spider):
 			
 			
 	def parse(self,response):
-		#inspect_response(response,self)
 		movielist = response.xpath('//tr[@class="lista2"]/td[2]/a[1]/@href').extract()
 		
-		for item in movielist:
-			url = self.url_prefix + item
-			yield scrapy.Request(url,callback=self.moviepase)
-	
+		#for item in movielist:
+		#	url = self.url_prefix + item
+		#	yield scrapy.Request(url,callback=self.moviepase)
+		url = self.url_prefix + movielist[0]
+		return scrapy.Request(url,callback=self.moviepase)
+		
 	def moviepase(self,response):
-		inspect_response(response,self)
+		#inspect_response(response,self)
+		trlist = response.xpath('//table[@class="lista-rounded"]/tr[2]/td/div/table/tr')
 		
 		itemloader = ItemLoader(item=CrawlerItem())
-		#获取包含真个电影的 table
-		movie_table = response.xpath('//table[@class="lista-rounded"]/tr[2]/td/div//table')
 		
-		#get poster url
-		poster_url = movie_table.xpath('./tr[3]/td[2]/img/@src').extract()
-		itemloader.add_value('poster_url',poster_url)
+		#torrent name
+		torrentname = trlist[0].xpath('./td[2]/a[1]/text()').extract()
+		itemloader.add_value('torrentname',torrentname)
 		
-		#get screen shot image url
-		shot_urls = movie_table.xpath('./tr[5]/td[2]/a/img/@src').extract()
-		itemloader.add_value('screenshot_url',shot_urls)
+		#torrent url
+		torrenturl = trlist[0].xpath('./td[2]/a[1]/@href').extract()
+		torrenturl = self.url_prefix + str(torrenturl)
+		itemloader.add_value('torrenturl',torrenturl)
 		
-		#get imdb url
-		imdb_url = movie_table.xpath('/tr[6]/td[2]/a/@href').extract()
-		itemloader.add_value('imdb_url',imdb_url)
+		#magnet url
+		magneturl = trlist[0].xpath('./td[2]/a[2]/@href').extract()
+		itemloader.add_value('magneturl',magneturl)
 		
-		#get category
-		category = movie_table.xpath('./tr[8]/td[2]/a/text()').extract()
+		#poster url 
+		posterurl = trlist[2].xpath('./td[2]/img/@src').extract()
+		itemloader.add_value('posterurl',posterurl)
+		
+		#screen shot picture url
+		screenshoturl = trlist[4].xpath('./td[2]/a/img/@src').extract()
+		itemloader.add_value('scrshoturl',screenshoturl)
+		
+		#trailer url
+		#trailerurl = trlist[5].xpath('./td[2]/a/@href').extract()
+		#itemloader.add_value('trailerurl',trailerurl)
+		
+		#imdb url
+		imdburl = trlist[6].xpath('./td[2]/a/@href').extract()
+		itemloader.add_value('imdburl',imdburl)
+		
+		#category 
+		category = trlist[8].xpath('./td[2]/a/text()').extract()
 		itemloader.add_value('category',category)
 		
-		#get file size
-		filesize = movie_table.xpath('./tr[9]/td[2]/text()').extract()
+		#file size
+		filesize = trlist[9].xpath('./td[2]/text()').extract()
 		itemloader.add_value('filesize',filesize)
 		
-		#get title
-		title = movie_table.xpath('./tr[12]/td[2]/span/text()').extract()
-		itemloader.add_value('title',title)
+		#movie title
+		movietitle = trlist[12].xpath('./td[2]/span/text()').extract()
+		itemloader.add_value('movietitle',movietitle)
 		
-		#get genres
-		genres = movie_table.xpath('./tr[13]/td[2]/span/a/text()').extract()
+		#genres
+		genres = trlist[14].xpath('./td[2]/span/a/text()').extract()
 		itemloader.add_value('genres',genres)
 		
-		#get year
-		year = moive_table.xpath('./tr[15]/td[2]/text()').extract()
+		#actors
+		peoplename = trlist[15].xpath('./td[2]/span/a/text()').extract()
+		itemloader.add_value('peoplename',peoplename)
+		
+		#director
+		director = trlist[16].xpath('./td[2]/span/a/text()').extract()
+		itemloader.add_value('peoplename',director)
+		
+		#runtime
+		runtime = trlist[17].xpath('./td[2]/text()').extract()
+		itemloader.add_value('runtime',runtime)
+		
+		#year
+		year = trlist[18].xpath('./td[2]/text()').extract()
 		itemloader.add_value('year',year)
 		
-		yield itemloader.load_item()
+		#plot
+		plot = trlist[19].xpath('./td[2]/span/text()').extract()
+		itemloader.add_value('plot',plot)
+		
+		return itemloader.load_item()
 		
 		
 	
