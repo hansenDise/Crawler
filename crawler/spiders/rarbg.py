@@ -12,27 +12,25 @@ class RarbgSpider(scrapy.Spider):
 	"https://rarbg.to/",)
 	
 	def parse(self,response):
-		#inspect_response(response,self)
 		moviecateurl = response.xpath('//body/table[3]/tr/td/table/tr[2]/td/a/@href').extract()
 		
 		url = self.url_prefix + moviecateurl[0]
-		self.logger.info('-------------' + url)
-		
+	
 		return scrapy.Request(url,self.moviecateparse)
 	
 	def moviecateparse(self,response):
-		#inspect_response(response,self)
+        inspect_response(response,self)
 		urllist = response.xpath('//tr[@class="lista2"]/td[2]/a[1]/@href').extract()
 		
 		[self.url_prefix + item for item in urllist]
 		
 		for url in urllist:
 			url = self.url_prefix + url
-			self.logger.info('-----------------' + url)
-			yield scrapy.Request(url,self.moiveparse)
+			yield scrapy.Request(url=url,callback=self.moiveparse,priority=1)
+        
+        
 	
 	def moiveparse(self,response):
-		#inspect_response(response,self)
 		trlist = response.xpath('//table[@class="lista-rounded"]/tr[2]/td/div/table/tr')
 		
 		return self.extractData(trlist)
@@ -49,7 +47,7 @@ class RarbgSpider(scrapy.Spider):
 			for row in trhead:
 				strrow = row.strip().replace(':','').lower()
 				strrow = strrow.strip()
-				self.logger.info('=========================' + strrow)
+				
 				if strrow == u'torrent':
 					#torrent name
 					torrentname = tr.xpath('./td[2]/a[1]/text()').extract()
