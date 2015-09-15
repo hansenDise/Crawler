@@ -10,7 +10,8 @@ import scrapy
 
 class CrawlerItem(scrapy.Item):
 	category = scrapy.Field()
-	peoplename = scrapy.Field()
+	actorname = scrapy.Field()
+	diectorname = scrapy.Field()
 	genres = scrapy.Field()
 	movietitle = scrapy.Field()
 	year = scrapy.Field()
@@ -25,4 +26,8 @@ class CrawlerItem(scrapy.Item):
 	scrshoturl = scrapy.Field()
 	trailerurl = scrapy.Field()
 	subtitleurl = scrapy.Field()
+	image_urls = scrapy.Field()
+	images = scrapy.Field()
+	file_urls = scrapy.Field()
+	files = scrapy.Field()
 	
