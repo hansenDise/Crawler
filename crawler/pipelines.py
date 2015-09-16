@@ -93,7 +93,7 @@ class CrawlerPipeline(object):
 				conn.commit()
 				
 		#torrent
-		print '+++++++++++++++select * from torrent where torrenturl="%s"'%item['torrenturl']
+		print '+++++++++++++++select * from torrent where torrenturl="%s"'%item['torrenturl'][0]
 		erows = cursor.execute('select * from torrent where torrenturl="%s"'%item['torrenturl'][0])
 		if erows == 0:
 			print '+++++++++++++++insert into torrent(movieid,torrentname,torrenturl,magneturl,filesize,addtime) values(%d,"%s","%s","%s","%s",now())'%(movieid,item['torrentname'],item['torrenturl'], item['magneturl'], item['filesize'] )
