@@ -19,10 +19,10 @@ class RarbgSpider(scrapy.Spider):
 		
 		[self.url_prefix + item for item in urllist]
 		
-		for url in urllist:
+		for url in urllist[3:4]:
 			url = self.url_prefix + url
-			yield scrapy.Request(url=url,callback=self.moiveparse,priority=1)
-
+			#yield scrapy.Request(url=url,callback=self.moiveparse,priority=1)
+			yield scrapy.Request(url=url,callback=self.moiveparse)
 
 	def moviecateparse(self,response):
 		urllist = response.xpath('//tr[@class="lista2"]/td[2]/a[1]/@href').extract()
@@ -37,7 +37,9 @@ class RarbgSpider(scrapy.Spider):
 	def moiveparse(self,response):
 		trlist = response.xpath('//table[@class="lista-rounded"]/tr[2]/td/div/table/tr')
 		
-		return self.extractData(trlist)
+		item = self.extractData(trlist)
+		print item
+		return item
 	
 	def extractData(self,trlist):
 		itemloader = ItemLoader(item=CrawlerItem())
@@ -66,27 +68,32 @@ class RarbgSpider(scrapy.Spider):
 					
 					#torrent url
 					torrenturl = tr.xpath('./td[2]/a[1]/@href').extract()
-					torrenturl = self.url_prefix + str(torrenturl)
-					itemloader.add_value('torrenturl',torrenturl)
+					if torrenturl:
+						turl = self.url_prefix + torrenturl[0]
+						print turl
+						itemloader.add_value('torrenturl',turl)
 					
-					#torrent files
-					itemloader.add_value('file_urls',torrenturl)
+						#torrent files
+						itemloader.add_value('file_urls',turl)
 					
 					#magnet url
 					magneturl = tr.xpath('./td[2]/a[2]/@href').extract()
-					itemloader.add_value('magneturl',magneturl)
+					if magneturl:
+						itemloader.add_value('magneturl',magneturl[0])
 					
 					extractIndex.append(index)
 				elif strrow == u'poster':
 					#poster url 
 					posterurl = tr.xpath('./td[2]/img/@src').extract()
-					posterurl = 'http:' + posterurl
-					itemloader.add_value('posterurl',posterurl)
+					
+					for purl in posterurl:
+						tempurl = 'http:' + purl
+						itemloader.add_value('posterurl',tempurl)
+
+						#images
+						itemloader.add_value('image_urls',tempurl)
+						
 					extractIndex.append(index)
-					
-					#images
-					itemloader.add_value('image_urls',posterurl)
-					
 				elif strrow == u'description':
 					#screen shot picture url
 					screenshoturl = tr.xpath('./td[2]/a/img/@src').extract()

@@ -17,8 +17,8 @@ NEWSPIDER_MODULE = 'crawler.spiders'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'crawler (+http://www.yourdomain.com)'
-USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.125 Safari/537.36'
-
+#USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.125 Safari/537.36'
+USER_AGENT= 'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; .NET4.0C; .NET4.0E; LBBROWSER) '
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS=32
 
@@ -26,7 +26,7 @@ USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, lik
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
 #DOWNLOAD_DELAY=3
-DOWNLOAD_DELAY=15
+DOWNLOAD_DELAY=20
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN=16
 #CONCURRENT_REQUESTS_PER_IP=16
@@ -55,7 +55,7 @@ DOWNLOAD_DELAY=15
 #    'crawler.middlewares.MyCustomDownloaderMiddleware': 543,
 #}
 DOWNLOADER_MIDDLEWARES = {
-    'crawler.myProxyDownloadMiddleware.MyProxyDownloadMiddleware': 543,
+   'crawler.myProxyDownloadMiddleware.MyProxyDownloadMiddleware': 543,
 }
 
 # Enable or disable extensions
@@ -70,12 +70,13 @@ DOWNLOADER_MIDDLEWARES = {
 #    'crawler.pipelines.SomePipeline': 300,
 #}
 ITEM_PIPELINES = {
-	'crawler.pipelines.CrawlerPipeline': 300,
+	'crawler.pipelines.CrawlerPipeline': 10,
 	'scrapy.pipelines.images.ImagesPipeline': 1,
 	'scrapy.pipelines.files.FilesPipeline': 1,
 }
 
 IMAGES_STORE = 'D:/scrapy_images'
+FILES_STORE = 'D:/scrapy_files'
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html
