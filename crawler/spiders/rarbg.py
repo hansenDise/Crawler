@@ -12,14 +12,11 @@ class RarbgSpider(scrapy.Spider):
 	"https://rarbg.to/torrents.php?category=movies",)
 	
 	def parse(self,response):
-		# = response.xpath('//body/table[3]/tr/td/table/tr[2]/td/a/@href').extract()
-		#url = self.url_prefix + moviecateurl[0]
-	
 		urllist = response.xpath('//tr[@class="lista2"]/td[2]/a[1]/@href').extract()
 		
 		[self.url_prefix + item for item in urllist]
 		
-		for url in urllist[3:4]:
+		for url in urllist[1:2]:
 			url = self.url_prefix + url
 			#yield scrapy.Request(url=url,callback=self.moiveparse,priority=1)
 			yield scrapy.Request(url=url,callback=self.moiveparse)
@@ -47,12 +44,10 @@ class RarbgSpider(scrapy.Spider):
 		extractIndex = []
 		index = -1
 		for tr in trlist:
-			
 			#imdb url
 			imdburl = tr.xpath('./td[2]/a[contains(@href,"http://imdb.com")]/@href').extract()
 			if imdburl:
 				itemloader.add_value('imdburl',imdburl)
-
 
 			index = index + 1
 			trhead = tr.xpath('./td[1]/text()').extract()

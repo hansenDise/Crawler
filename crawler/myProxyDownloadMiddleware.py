@@ -8,7 +8,7 @@ class MyProxyDownloadMiddleware(object):
         cursor = conn.cursor()
         proxyip = ''
         
-        proxyip =  'https://113.252.67.77:3128'
+        proxyip =  'https://218.4.236.117:80'
         request.meta['proxy'] = proxyip
 
         #weight is default inited to set 8000, when used ,weight decrease 1 
