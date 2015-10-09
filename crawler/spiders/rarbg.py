@@ -58,7 +58,7 @@ class RarbgSpider(scrapy.Spider):
 				
 				if strrow == u'torrent':
 					#torrent name
-					torrentname = tr.xpath('./td[2]/a[1]/text()').extract()
+					torrentname = tr.xpath('./td[2]/a[1]/text()').extract().replace('-RARBG','')
 					itemloader.add_value('torrentname',torrentname)
 					
 					#torrent url
@@ -66,7 +66,7 @@ class RarbgSpider(scrapy.Spider):
 					if torrenturl:
 						turl = self.url_prefix + torrenturl[0]
 						print turl
-						itemloader.add_value('torrenturl',turl)
+						itemloader.add_value('torrenturl',turl.replace('[','%5B').replace(']','%5D'))
 					
 						#torrent files
 						itemloader.add_value('file_urls',turl)
