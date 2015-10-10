@@ -41,7 +41,7 @@ class CrawlerPipeline(object):
 			logging.log(logging.INFO,"last_insert id="+str(categoryid))
 		else:
 			categoryid = cursor.fetchone()[0]
-			logging.log(logging.INFO,"-- [category] categoryid="+str(categoryid))
+
 		#movie
 		imdburl = item['imdburl'][0].lower()
 		movieid = 0
@@ -84,10 +84,20 @@ class CrawlerPipeline(object):
 				conn.commit()
 				
 		#torrent
-		erows = cursor.execute('select * from torrent where torrenturl="%s"'%item['torrenturl'][0])
+		torrentid = 0
+		erows = cursor.execute('select torrentid from torrent where torrenturl="%s"'%item['torrenturl'][0])
 		if erows == 0:
 			cursor.execute('insert into torrent(movieid,name,torrenturl,magneturl,filesize,addedtime,seeds,downloadcount) values(%d,"%s","%s","%s","%s",now(),0,0)'%(movieid,item['torrentname'][0],item['torrenturl'][0], item['magneturl'][0], item['filesize'][0] ) )
 			conn.commit()
+			
+			cursor.execute('select last_insert_id()')
+			torrentid = cursor.fetchone()[0]
+		else:
+			torrentid = cursor.fetchone()[0]
+			
+		#movie_torrent
+		cursor.execute('insert into movie_torrent(movieid,torrentid) values(%d,%d)'%(movieid,torrentid))
+		conn.commit()
 		
 		#people
 		for actor in item['actorname']:
@@ -135,37 +145,6 @@ class CrawlerPipeline(object):
 					
 					cursor.execute('insert into movie_people(movieid,peopleid)values(%d,%d)'%(movieid,peopleid))
 					conn.commit()
-
-					
-					
-
-					
-class MyFilePipeLine(FilesPipeline):
-	
-	def file_path(self, request, response=None, info=None):
-		## start of deprecation warning block (can be removed in the future)
-		def _warn():
-			from scrapy.exceptions import ScrapyDeprecationWarning
-			import warnings
-			warnings.warn('FilesPipeline.file_key(url) method is deprecated, please use '
-						'file_path(request, response=None, info=None) instead',
-							category=ScrapyDeprecationWarning, stacklevel=1)
-
-		# check if called from file_key with url as first argument
-		if not isinstance(request, Request):
-			_warn()
-			url = request
-		else:
-			url = request.url
-
-		# detect if file_key() method has been overridden
-		if not hasattr(self.file_key, '_base'):
-			_warn()
-			return self.file_key(url)
-		## end of deprecation warning block
-
-		media_guid = hashlib.sha1(url).hexdigest()  # change to request.url after deprecation
-		media_ext = os.path.splitext(url)[1]  # change to request.url after deprecation
-		return 'full/%s%s' % (media_guid, media_ext)
-
-
+		
+		#close database connection
+		conn.close()
