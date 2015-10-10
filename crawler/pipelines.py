@@ -19,9 +19,12 @@ class CrawlerPipeline(object):
 		if not isinstance(item,CrawlerItem):
 			raise DropItem("invalid item %s",item)
 		
+		#if import field missed ,then drop the item extracted
+		if item['movietitle'].__len__() ==0 or item['torrenturl'].__len__() == 0 or item['imdburl'].__len__() == 0 :
+			raise DropItem("invalid item %s",item)
+		
 		for imdblink in item['imdburl']:
 			if imdblink.strip().__len__() <=0:
-				print "*********** invalid item"
 				raise DropItem("invalid item %s",item)
 		
 		conn = MySQLdb.connect(host='localhost',user='root',passwd='hansen',db='popu')
