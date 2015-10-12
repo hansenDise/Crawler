@@ -19,22 +19,22 @@ class RarbgSpider(scrapy.Spider):
 		
 		[self.url_prefix + item for item in urllist]
 		
-		for url in urllist[1:2]:
+		for url in urllist:
 			url = self.url_prefix + url
 			yield scrapy.Request(url=url,callback=self.moiveparse,priority=-5)  #Negative values are allowed in order to indicate relatively low-priority.
 			#yield scrapy.Request(url=url,callback=self.moiveparse)
 
-	def moviecateparse(self,response):
-		if response.status != 200:
-			closed("catched!")
-
-		urllist = response.xpath('//tr[@class="lista2"]/td[2]/a[1]/@href').extract()
-		
-		[self.url_prefix + item for item in urllist]
-		
-		for url in urllist:
-			url = self.url_prefix + url
-			yield scrapy.Request(url=url,callback=self.moiveparse,priority=1)
+#	def moviecateparse(self,response):
+#		if response.status != 200:
+#			closed("catched!")
+#
+#		urllist = response.xpath('//tr[@class="lista2"]/td[2]/a[1]/@href').extract()
+#		
+#		[self.url_prefix + item for item in urllist]
+#		
+#		for url in urllist:
+#			url = self.url_prefix + url
+#			yield scrapy.Request(url=url,callback=self.moiveparse,priority=1)
 
 	
 	def moiveparse(self,response):
