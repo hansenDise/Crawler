@@ -55,7 +55,10 @@ class CrawlerPipeline(object):
 		elif erow == 1:
 			movieid = cursor.fetchone()[0]
 		else:
-			cursor.execute('insert into movie(categoryid,title,year,imdburl,posterurl,runtime,plot) values(%d,"%s",%d,"%s","%s",%d,"%s")'%(categoryid,item['movietitle'][0],int(item['year'][0]),item['imdburl'][0],item['posterurl'][0],int(item['runtime'][0]),item['plot'][0] ) )
+			
+			print '++++++++++++++++++++++++insert into movie(categoryid,title,year,imdburl,posterurl,runtime,plot) values(%d,"%s",%d,"%s","%s",%d,"%s")'%(categoryid,item['movietitle'][0],int(item['year'][0]),item['imdburl'][0],item['posterurl'][0],int(item['runtime'][0]),item['plot'][0])
+			
+			cursor.execute('insert into movie(categoryid,title,year,imdburl,posterurl,runtime,plot) values(%d,"%s",%d,"%s","%s",%d,"%s")'%(categoryid,item['movietitle'][0],int(item['year'][0]),item['imdburl'][0],item['posterurl'][0],int(item['runtime'][0]),item['plot'][0].replace('"',' ') ) )
 			conn.commit()
 			cursor.execute('select last_insert_id()')
 			movieid = cursor.fetchone()[0]

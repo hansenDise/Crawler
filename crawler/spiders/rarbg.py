@@ -12,16 +12,22 @@ class RarbgSpider(scrapy.Spider):
 	"https://rarbg.to/torrents.php?category=movies",)
 	
 	def parse(self,response):
+		if response.status != 200:
+			closed("catched!")
+			
 		urllist = response.xpath('//tr[@class="lista2"]/td[2]/a[1]/@href').extract()
 		
 		[self.url_prefix + item for item in urllist]
 		
 		for url in urllist[1:2]:
 			url = self.url_prefix + url
-			#yield scrapy.Request(url=url,callback=self.moiveparse,priority=1)
-			yield scrapy.Request(url=url,callback=self.moiveparse)
+			yield scrapy.Request(url=url,callback=self.moiveparse,priority=-5)  #Negative values are allowed in order to indicate relatively low-priority.
+			#yield scrapy.Request(url=url,callback=self.moiveparse)
 
 	def moviecateparse(self,response):
+		if response.status != 200:
+			closed("catched!")
+
 		urllist = response.xpath('//tr[@class="lista2"]/td[2]/a[1]/@href').extract()
 		
 		[self.url_prefix + item for item in urllist]
@@ -32,6 +38,9 @@ class RarbgSpider(scrapy.Spider):
 
 	
 	def moiveparse(self,response):
+		if response.status != 200:
+			closed("catched!")
+	
 		trlist = response.xpath('//table[@class="lista-rounded"]/tr[2]/td/div/table/tr')
 		
 		item = self.extractData(trlist)
@@ -55,7 +64,7 @@ class RarbgSpider(scrapy.Spider):
 				
 				if strrow == u'torrent':
 					#torrent name
-					torrentname = tr.xpath('./td[2]/a[1]/text()').extract().replace('-RARBG','')
+					torrentname = tr.xpath('./td[2]/a[1]/text()').extract()[0].replace('-RARBG','')
 					itemloader.add_value('torrentname',torrentname)
 					
 					#torrent url

@@ -54,9 +54,10 @@ DOWNLOAD_DELAY=10
 #DOWNLOADER_MIDDLEWARES = {
 #    'crawler.middlewares.MyCustomDownloaderMiddleware': 543,
 #}
-# DOWNLOADER_MIDDLEWARES = {
-   # 'crawler.myProxyDownloadMiddleware.MyProxyDownloadMiddleware': 543,
-# }
+DOWNLOADER_MIDDLEWARES = {
+    'crawler.myProxyDownloadMiddleware.MyProxyDownloadMiddleware': 543,
+	'scrapy.downloadermiddlewares.httproxy.HttpProxyMiddleware':550,
+}
 
 # Enable or disable extensions
 # See http://scrapy.readthedocs.org/en/latest/topics/extensions.html
