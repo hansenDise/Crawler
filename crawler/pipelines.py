@@ -89,13 +89,7 @@ class CrawlerPipeline(object):
 			cursor.execute('insert into movie_genres(movieid,genresid) values(%d,%d)'%(movieid,genresid))
 			conn.commit()
 			
-		#screenshot
-		for it in item['scrshoturl']:
-			erow = cursor.execute('select * from screenshot where picurl = "%s"'%it)
-			if erow == 0:
-				cursor.execute('insert into screenshot(movieid ,picurl) values(%d,"%s")'%(movieid,it))
-				conn.commit()
-				
+
 		#torrent
 		torrentid = 0
 		erows = cursor.execute('select torrentid from torrent where torrenturl="%s"'%item['torrenturl'][0])
@@ -107,7 +101,14 @@ class CrawlerPipeline(object):
 			torrentid = cursor.fetchone()[0]
 		else:
 			torrentid = cursor.fetchone()[0]
-			
+
+		#screenshot
+		for it in item['scrshoturl']:
+			erow = cursor.execute('select * from screenshot where picurl = "%s"'%it)
+			if erow == 0:
+				cursor.execute('insert into screenshot(movieid ,picurl) values(%d,"%s")'%(torrentid,it))
+				conn.commit()
+							
 		#movie_torrent
 		cursor.execute('insert into movie_torrent(movieid,torrentid) values(%d,%d)'%(movieid,torrentid))
 		conn.commit()
