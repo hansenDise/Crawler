@@ -19,6 +19,12 @@ class CrawlerPipeline(object):
 		if not isinstance(item,CrawlerItem):
 			raise DropItem("invalid item %s",item)
 		
+		print '---------------------------------------------------'
+		print item.get('image_urls')
+		print '----------------------------------------------------'
+		print item.get('file_urls')
+		print '----------------------------------------------------'
+		
 		#if import field missed ,then drop the item extracted
 		if item['movietitle'].__len__() ==0 or item['torrenturl'].__len__() == 0 or item['imdburl'].__len__() == 0 :
 			raise DropItem("invalid item %s",item)
@@ -54,11 +60,12 @@ class CrawlerPipeline(object):
 			raise DropItem("data mess %s",item)
 		elif erow == 1:
 			movieid = cursor.fetchone()[0]
+			
 		else:
 			
-			print '++++++++++++++++++++++++insert into movie(categoryid,title,year,imdburl,posterurl,runtime,plot) values(%d,"%s",%d,"%s","%s",%d,"%s")'%(categoryid,item['movietitle'][0],int(item['year'][0]),item['imdburl'][0],item['posterurl'][0],int(item['runtime'][0]),item['plot'][0])
+			print '++++++++++++++++++++++++insert into movie(categoryid,title,year,imdburl,posterurl,runtime,plot) values(%d,"%s",%d,"%s","%s",%d,"%s")'%(categoryid,item.get('movietitle','empty')[0],int(item.get('year','0')[0]),item.get('imdburl','empty')[0],item.get('posterurl','empty')[0],int(item.get('runtime','0')[0]),item.get('plot','empty')[0].replace('"',' '))
 			
-			cursor.execute('insert into movie(categoryid,title,year,imdburl,posterurl,runtime,plot) values(%d,"%s",%d,"%s","%s",%d,"%s")'%(categoryid,item['movietitle'][0],int(item['year'][0]),item['imdburl'][0],item['posterurl'][0],int(item['runtime'][0]),item['plot'][0].replace('"',' ') ) )
+			cursor.execute('insert into movie(categoryid,title,year,imdburl,posterurl,runtime,plot) values(%d,"%s",%d,"%s","%s",%d,"%s")'%(categoryid,item.get('movietitle','empty')[0],int(item.get('year','0')[0]),item.get('imdburl','empty')[0],item.get('posterurl','empty')[0],int(item.get('runtime','0')[0]),item.get('plot','empty')[0].replace('"',' ')) )
 			conn.commit()
 			cursor.execute('select last_insert_id()')
 			movieid = cursor.fetchone()[0]
@@ -131,7 +138,7 @@ class CrawlerPipeline(object):
 			elif names.__len__() == 2:
 				ret = cursor.execute('select peopleid from people where firstname_en="%s" and lastname_en="%s"'%(names[0],names[1]))
 				if ret == 0:
-					cursor.execute('insert into people(firstname_en,middlename_en,lastname_en,occupationid,borndate,summary) values("%s","%s","",%d,now(),"")'%(names[0],names[1],2))
+					cursor.execute('insert into people(firstname_en,middlename_en,lastname_en,occupationid,borndate,summary) values("%s","","%s",%d,now(),"")'%(names[0],names[1],2))
 					conn.commit()
 					
 					cursor.execute('select last_insert_id()')
@@ -143,7 +150,7 @@ class CrawlerPipeline(object):
 			elif names.__len__() == 3:
 				ret = cursor.execute('select peopleid from people where firstname_en="%s" and middlename_en="%s" and lastname_en="%s"'%(names[0],names[1],names[2]))
 				if ret == 0:
-					cursor.execute('insert into people(firstname_en,middlename_en,lastname_en,occupationid,borndate,summary) values("%s","%s",%d,now(),"")'%(names[0],names[1],names[2],2))
+					cursor.execute('insert into people(firstname_en,middlename_en,lastname_en,occupationid,borndate,summary) values("%s","%s","%s",%d,now(),"")'%(names[0],names[1],names[2],2))
 					conn.commit()
 					
 					cursor.execute('select last_insert_id()')

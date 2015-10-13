@@ -26,7 +26,7 @@ USER_AGENT= 'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
 #DOWNLOAD_DELAY=3
-DOWNLOAD_DELAY=10
+DOWNLOAD_DELAY=30
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN=16
 #CONCURRENT_REQUESTS_PER_IP=16
@@ -55,8 +55,8 @@ DOWNLOAD_DELAY=10
 #    'crawler.middlewares.MyCustomDownloaderMiddleware': 543,
 #}
 DOWNLOADER_MIDDLEWARES = {
-    'crawler.myProxyDownloadMiddleware.MyProxyDownloadMiddleware': 543,
-	'scrapy.downloadermiddlewares.httproxy.HttpProxyMiddleware':550,
+    'crawler.myProxyDownloadMiddleware.MyProxyDownloadMiddleware': 10,
+	'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware':20,
 }
 
 # Enable or disable extensions
@@ -71,9 +71,9 @@ DOWNLOADER_MIDDLEWARES = {
 #    'crawler.pipelines.SomePipeline': 300,
 #}
 ITEM_PIPELINES = {
-	'crawler.pipelines.CrawlerPipeline':10,
-	'scrapy.pipelines.images.ImagesPipeline': 2,
-	'scrapy.pipelines.files.FilesPipeline': 1,
+	'crawler.pipelines.CrawlerPipeline':40,
+	'scrapy.pipelines.images.ImagesPipeline': 20,
+	'scrapy.pipelines.files.FilesPipeline': 30,
 }
 
 IMAGES_STORE = 'D:/scrapy_images'

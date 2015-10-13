@@ -6,7 +6,7 @@ from crawler.items import CrawlerItem
 
 class RarbgSpider(scrapy.Spider):
 	name="rarbgmovie"
-	allowed_domains = ["rarbg.to"]
+	#allowed_domains = ["*"]
 	url_prefix = "https://rarbg.to"
 	start_urls = (
 	"https://rarbg.to/torrents.php?category=movies",)
@@ -40,7 +40,7 @@ class RarbgSpider(scrapy.Spider):
 	def moiveparse(self,response):
 		if response.status != 200:
 			closed("catched!")
-	
+		
 		trlist = response.xpath('//table[@class="lista-rounded"]/tr[2]/td/div/table/tr')
 		
 		item = self.extractData(trlist)
