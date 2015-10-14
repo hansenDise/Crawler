@@ -65,7 +65,7 @@ class CrawlerPipeline(object):
 			
 			print '++++++++++++++++++++++++insert into movie(categoryid,title,year,imdburl,posterurl,runtime,plot) values(%d,"%s",%d,"%s","%s",%d,"%s")'%(categoryid,item.get('movietitle','empty')[0],int(item.get('year','0')[0]),item.get('imdburl','empty')[0],item.get('posterurl','empty')[0],int(item.get('runtime','0')[0]),item.get('plot','empty')[0].replace('"',' '))
 			
-			cursor.execute('insert into movie(categoryid,title,year,imdburl,posterurl,runtime,plot) values(%d,"%s",%d,"%s","%s",%d,"%s")'%(categoryid,item.get('movietitle','empty')[0],int(item.get('year','0')[0]),item.get('imdburl','empty')[0],item.get('posterurl','empty')[0],int(item.get('runtime','0')[0]),item.get('plot','empty')[0].replace('"',' ')) )
+			cursor.execute('insert into movie(title,year,imdburl,posterurl,runtime,plot) values("%s",%d,"%s","%s",%d,"%s")'%(item.get('movietitle','empty')[0],int(item.get('year','0')[0]),item.get('imdburl','empty')[0],item.get('posterurl','empty')[0],int(item.get('runtime','0')[0]),item.get('plot','empty')[0].replace('"',' ')) )
 			conn.commit()
 			cursor.execute('select last_insert_id()')
 			movieid = cursor.fetchone()[0]
@@ -94,7 +94,7 @@ class CrawlerPipeline(object):
 		torrentid = 0
 		erows = cursor.execute('select torrentid from torrent where torrenturl="%s"'%item['torrenturl'][0])
 		if erows == 0:
-			cursor.execute('insert into torrent(movieid,name,torrenturl,magneturl,filesize,addedtime,seeds,downloadcount) values(%d,"%s","%s","%s","%s",now(),0,0)'%(movieid,item['torrentname'][0],item['torrenturl'][0], item['magneturl'][0], item['filesize'][0] ) )
+			cursor.execute('insert into torrent(movieid,name,torrenturl,magneturl,filesize,addedtime,seeds,downloadcount,categoryid) values(%d,"%s","%s","%s","%s",now(),0,0,%d)'%(movieid,item['torrentname'][0],item['torrenturl'][0], item['magneturl'][0], item['filesize'][0],categoryid ) )
 			conn.commit()
 			
 			cursor.execute('select last_insert_id()')
@@ -106,7 +106,7 @@ class CrawlerPipeline(object):
 		for it in item['scrshoturl']:
 			erow = cursor.execute('select * from screenshot where picurl = "%s"'%it)
 			if erow == 0:
-				cursor.execute('insert into screenshot(movieid ,picurl) values(%d,"%s")'%(torrentid,it))
+				cursor.execute('insert into screenshot(torrentid ,picurl) values(%d,"%s")'%(torrentid,it))
 				conn.commit()
 							
 		#movie_torrent

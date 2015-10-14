@@ -71,7 +71,7 @@ DOWNLOADER_MIDDLEWARES = {
 #    'crawler.pipelines.SomePipeline': 300,
 #}
 ITEM_PIPELINES = {
-	'crawler.pipelines.CrawlerPipeline':40,
+	'crawler.pipelines.CrawlerPipeline':10,
 	'scrapy.pipelines.images.ImagesPipeline': 20,
 	'scrapy.pipelines.files.FilesPipeline': 30,
 }
