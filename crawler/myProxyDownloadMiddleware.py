@@ -5,8 +5,8 @@ class MyProxyDownloadMiddleware(object):
     
     def process_request(self,request,spider):
 	
-		if len(request.url) != 32:
-			return None
+		#if len(request.url) != 32:
+		#	return None
 		
 		conn = MySQLdb.connect(host='localhost',user='root',passwd='hansen',db='popu')
 		cursor = conn.cursor()
@@ -15,12 +15,12 @@ class MyProxyDownloadMiddleware(object):
 		#weight is default inited to set 8000, when used ,weight decrease 1 
 
 		while True:
-			ret = cursor.execute('select ptype, ip,port,id,weight from proxyip where bvalid = 1  order by weight desc limit 1')
+			ret = cursor.execute('select ptype, ip,port,weight from proxyip where bvalid = 1  order by weight desc limit 1')
 			record = cursor.fetchone()
 			ptype = record[0]
 			ip = record[1]
 			port = record[2]
-			id = record[3]
+			#id = record[3]
 			weight = record[4]
 
 			sfd = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -28,12 +28,12 @@ class MyProxyDownloadMiddleware(object):
 			try:
 				tup = ip,port
 				sfd.connect(tup)
-				proxyip =  r'http://' + str(ip) + r':' + str(port)
+				proxyip =  ptype+ r'://' + str(ip) + r':' + str(port)
 				request.meta['proxy'] = proxyip
 				print '[[[[[[[[[[[]]]]]]]]]]]------------ use proxy ip :  ' + proxyip
 				cursor.execute('update proxyip set weight=%d where id=%d'%(weight-1,id))
 				conn.commit()
-                
+
 				break
                 
 			except:
