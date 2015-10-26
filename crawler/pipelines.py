@@ -13,6 +13,8 @@ from scrapy.pipelines.files import FilesPipeline
 import MySQLdb
 import logging
 
+import hashlib
+
 class CrawlerPipeline(object):
 
 	def process_item(self, item, spider):
@@ -94,7 +96,10 @@ class CrawlerPipeline(object):
 		torrentid = 0
 		erows = cursor.execute('select torrentid from torrent where torrenturl="%s"'%item['torrenturl'][0])
 		if erows == 0:
-			cursor.execute('insert into torrent(movieid,name,torrenturl,magneturl,filesize,addedtime,seeds,downloadcount,categoryid) values(%d,"%s","%s","%s","%s",now(),0,0,%d)'%(movieid,item['torrentname'][0],item['torrenturl'][0], item['magneturl'][0], item['filesize'][0],categoryid ) )
+			shaobj = hashlib.sha1()
+			shaobj.update(item['torrenturl'][0])
+			shacode = shaobj.hexdigest()
+			cursor.execute('insert into torrent(movieid,name,shacode,torrenturl,magneturl,filesize,addedtime,seeds,downloadcount,categoryid) values(%d,"%s","%s","%s","%s","%s",now(),0,0,%d)'%(movieid,item['torrentname'][0],shacode[0:7],item['torrenturl'][0], item['magneturl'][0], item['filesize'][0],categoryid ) )
 			conn.commit()
 			
 			cursor.execute('select last_insert_id()')
